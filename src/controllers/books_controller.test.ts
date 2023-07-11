@@ -119,29 +119,29 @@ describe("POST /api/v1/books endpoint", () => {
 	});
 });
 
-	test("status code 400 when saving ill formatted JSON", async () => {
-		// Arrange - we can enforce throwing an exception by mocking the implementation
-		jest.spyOn(bookService, "saveBook").mockImplementation(() => {
-			throw new Error("Error saving book");
-		});
+test("status code 400 when saving ill formatted JSON", async () => {
+	// Arrange - we can enforce throwing an exception by mocking the implementation
+	jest.spyOn(bookService, "saveBook").mockImplementation(() => {
+		throw new Error("Error saving book");
+	});
 
+	// Act
+	const res = await request(app)
+		.post("/api/v1/books")
+		.send({ title: "Fantastic Mr. Fox", author: "Roald Dahl" }); // No bookId
+
+	// Assert
+	expect(res.statusCode).toEqual(400);
+});
+
+describe("DELETE /api/v1/books endpoint", () => {
+	test("status code successfully 200 for deleting a valid book", async () => {
 		// Act
 		const res = await request(app)
-			.post("/api/v1/books")
-			.send({ title: "Fantastic Mr. Fox", author: "Roald Dahl" }); // No bookId
+			.delete("/api/v1/books/2")
+			.send({ bookId: 2 });
 
 		// Assert
-		expect(res.statusCode).toEqual(400);
+		expect(res.statusCode).toEqual(200);
 	});
-
-	describe("DELETE /api/v1/books endpoint", () => {
-		test("status code successfully 200 for deleting a valid book", async () => {
-			// Act
-			const res = await request(app)
-				.delete("/api/v1/books")
-				.send({ bookId: 3});
-	
-			// Assert
-			expect(res.statusCode).toEqual(200);
-		});	
-	});
+});
